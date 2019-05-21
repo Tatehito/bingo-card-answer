@@ -1,75 +1,21 @@
 # coding: utf-8
-
 class Bingo
   def self.generate_card
-    header = " B |  I |  N |  G |  O"
+    header = " B |  I |  N |  G |  O" + "\n"
 
-    # 各列の数字を配列で取得する
-    @columnB = generate_numbers_column("B")
-    @columnI = generate_numbers_column("I")
-    @columnN = generate_numbers_column("N")
-    @columnG = generate_numbers_column("G")
-    @columnO = generate_numbers_column("O")
+    numbers = ("1".."75").each_slice(15).to_a.map { |n|
+      n.sample(5)
+    }.transpose
 
-    # 各行の文字列を作成する
-    line0 = generate_line_string(0)
-    line1 = generate_line_string(1)
-    line2 = generate_line_string(2)
-    line3 = generate_line_string(3)
-    line4 = generate_line_string(4)
+    numbers[2][2] = " "
 
-    # ビンゴカードを出力する
-    <<-card
-#{header}
-#{line0}
-#{line1}
-#{line2}
-#{line3}
-#{line4}
-    card
-  end
+    body = numbers.map { |line|
+      line.map { |num|
+        num.rjust(2)
+      }.join(" | ") + ("\n")
+    }.join
 
-  # 1列分の数字を生成し配列を返す
-  def self.generate_numbers_column(column)
-    # 生成対象のカラムごとに候補の数字の範囲を定義する
-    if column == "B"
-        numbers = ("1".."15").to_a
-    elsif column == "I"
-        numbers = ("16".."30").to_a
-    elsif column == "N"
-        numbers = ("31".."45").to_a
-    elsif column == "G"
-        numbers = ("46".."60").to_a
-    elsif column == "O"
-        numbers = ("61".."75").to_a
-    end
-    
-    # 候補の数字から5つの数字をランダムに選び配列で返す
-    # 一度選ばれた数字を候補から除くことで同じ数字が選ばれないようにしている
-    column_numbers = []
-    5.times do
-        random = rand(0..numbers.length-1)
-        selected_number = numbers[random]
-        
-        # 一桁の数字が選ばれた場合はスペースを加えて右詰にする
-        if selected_number.length == 1
-            selected_number = " " + selected_number
-        end
-        
-        column_numbers.push(selected_number)
-        numbers.delete_at(random)
-    end
-    column_numbers
-  end
-
-  # 1行分の文字列を生成する
-  def self.generate_line_string(line_number)
-    # 3行目の3列目（中央）は空白をセットする
-    if line_number == 2
-        line = @columnB[line_number] + " | " + @columnI[line_number] + " | " + "  "                  + " | " + @columnG[line_number] + " | " + @columnO[line_number]
-    else
-        line = @columnB[line_number] + " | " + @columnI[line_number] + " | " + @columnN[line_number] + " | " + @columnG[line_number] + " | " + @columnO[line_number] 
-    end
+    header + body
   end
 end
 
